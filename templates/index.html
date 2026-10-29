@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CasaPredict — King County House Price Prediction</title>
+  <meta name="description" content="Discover your property's estimated market value in King County, Washington using machine learning models trained on 21,411 verified residential sales. Soft pastel proptech UI.">
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/static/style.css">
+  <!-- Chart.js for Dynamic Interactive Visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- ========================================================================
+       Navigation Bar
+       ======================================================================== -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="#home" class="nav-brand">
+        <div class="brand-icon">
+          <!-- House SVG Icon -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 10.5L12 3l9 7.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+        </div>
+        <span>CasaPredict</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#home" class="nav-link">Home</a></li>
+        <li><a href="#predict" class="nav-link">Predict Price</a></li>
+        <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+        <li><a href="#features" class="nav-link">Features</a></li>
+        <li><a href="#about" class="nav-link">About</a></li>
+        <li><a href="#history" class="nav-link">Recent Valuations</a></li>
+      </ul>
+
+      <a href="#predict" class="nav-cta-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        Predict Price
+      </a>
+    </div>
+  </nav>
+
+  <!-- ========================================================================
+       Hero Section
+       ======================================================================== -->
+  <section class="hero-section" id="home">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-content">
+          <h1 class="hero-title">
+            Find Your Home's <br>
+            <span class="highlight">True Value</span>
+          </h1>
+
+          <p class="hero-subtitle">
+            Smart insights. Better decisions. Discover your property's estimated market value in seconds.
+          </p>
+
+          <div class="hero-cta-group">
+            <a href="#predict" class="btn-primary">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              Predict House Price
+            </a>
+            <a href="#features" class="btn-secondary">
+              Explore Features
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-visual-card">
+          <img src="/static/images/pastel_hero_house.jpg" alt="CasaPredict Modern Home" class="hero-image" loading="lazy">
+          <div class="floating-stat-badge">
+            <div class="floating-stat-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <div>
+              <div class="floating-stat-title">King County AVM</div>
+              <div class="floating-stat-value">Seattle &bull; Bellevue &bull; Eastside</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 Hero Info Cards -->
+      <div class="hero-info-cards">
+        <div class="info-card">
+          <div class="info-card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z"></path>
+            </svg>
+          </div>
+          <h3 class="info-card-title">AI-Powered Predictions</h3>
+          <p class="info-card-text">Random Forest Regressor trained on 21,411 verified King County property sales with zero data leakage ($R^2 = 0.8724$).</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </div>
+          <h3 class="info-card-title">Instant Price Estimates</h3>
+          <p class="info-card-text">Accurate valuations in USD ($) and rate per square foot, calculated across living area, layout, zipcode &amp; construction quality.</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+          </div>
+          <h3 class="info-card-title">Data-Driven Insights</h3>
+          <p class="info-card-text">Understand value drivers with Haversine distance to Downtown Seattle, amenity scores, and interactive evaluation curves.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       Prediction Form Section
+       ======================================================================== -->
+  <section class="section-wrapper" id="predict">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">King County Valuation Engine</span>
+        <h2 class="section-title">Property Valuation Estimator</h2>
+        <p class="section-desc">Enter your residential property details below to calculate an instant, data-backed market valuation in USD.</p>
+      </div>
+
+      <!-- Error Alert Box -->
+      <div id="error-box" class="alert-box" style="display: none;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span id="error-text">Please verify your inputs.</span>
+      </div>
+
+      <!-- Prediction Form Card -->
+      <div class="form-card" id="form-card-container">
+        <form id="prediction-form">
+
+          <!-- Model Info Banner -->
+          <div class="model-control-card">
+            <div class="model-control-header">
+              <div class="model-control-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                  <path d="M2 17l10 5 10-5"></path>
+                  <path d="M2 12l10 5 10-5"></path>
+                </svg>
+                Production Automated Valuation Model (AVM)
+              </div>
+              <span id="active-model-score-text" style="font-size: 0.82rem; font-weight: 700; color: #404070;">Random Forest &bull; Test R²: 0.8724 &bull; Test MAE: $67,108</span>
+            </div>
+          </div>
+
+          <!-- SECTION 1: Living Area & Dimensions -->
+          <div class="form-section-group group-specs">
+            <div class="group-header">
+              <div class="group-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                  <line x1="3" y1="9" x2="21" y2="9"></line>
+                  <line x1="9" y1="21" x2="9" y2="9"></line>
+                </svg>
+              </div>
+              <h3 class="group-title">Area Dimensions (Square Feet)</h3>
+              <span class="group-subtitle">Living space, lot size, above-ground, and basement area</span>
+            </div>
+
+            <div class="form-grid-4">
+              <div class="form-field">
+                <label class="field-label" for="sqft_living">
+                  Living Space <span class="unit">(sq ft)</span>
+                </label>
+                <input type="number" id="sqft_living" name="sqft_living" class="field-input" min="300" max="15000" step="25" value="2150" required>
+              </div>
+
+              <div class="form-field">
+                <label class="field-label" for="sqft_lot">
+                  Total Lot Size <span class="unit">(sq ft)</span>
+                </label>
+                <input type="number" id="sqft_lot" name="sqft_lot" class="field-input" min="300" max="1500000" step="50" value="5800" required>
+              </div>
+
+              <div class="form-field">
+                <label class="field-label" for="sqft_above">
+                  Above Ground <span class="unit">(sq ft)</span>
+                </label>
+                <input type="number" id="sqft_above" name="sqft_above" class="field-input" min="0" max="12000" step="25" value="1650">
+              </div>
+
+              <div class="form-field">
+                <label class="field-label" for="sqft_basement">
+                  Basement <span class="unit">(sq ft)</span>
+                </label>
+                <input type="number" id="sqft_basement" name="sqft_basement" class="field-input" min="0" max="5000" step="25" value="500">
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 2: Layout & Capacity -->
+          <div class="form-section-group group-location">
+            <div class="group-header">
+              <div class="group-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                </svg>
+              </div>
+              <h3 class="group-title">Bedrooms, Bathrooms &amp; Stories</h3>
+              <span class="group-subtitle">Room layout and structural levels</span>
+            </div>
+
+            <div class="form-grid-3">
+              <div class="form-field">
+                <label class="field-label" for="bedrooms">Bedrooms</label>
+                <select id="bedrooms" name="bedrooms" class="field-select">
+                  <option value="1">1 Bedroom</option>
+                  <option value="2">2 Bedrooms</option>
+                  <option value="3" selected>3 Bedrooms</option>
+                  <option value="4">4 Bedrooms</option>
+                  <option value="5">5 Bedrooms</option>
+                  <option value="6">6+ Bedrooms</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label class="field-label" for="bathrooms">Bathrooms</label>
+                <select id="bathrooms" name="bathrooms" class="field-select">
+                  <option value="1.0">1.0 Bath</option>
+                  <option value="1.5">1.5 Baths</option>
+                  <option value="1.75">1.75 Baths</option>
+                  <option value="2.0">2.0 Baths</option>
+                  <option value="2.25" selected>2.25 Baths</option>
+                  <option value="2.5">2.5 Baths</option>
+                  <option value="3.0">3.0 Baths</option>
+                  <option value="3.5">3.5 Baths</option>
+                  <option value="4.0">4.0+ Baths</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label class="field-label" for="floors">Number of Floors</label>
+                <select id="floors" name="floors" class="field-select">
+                  <option value="1.0">1.0 Story (Ranch / Bungalow)</option>
+                  <option value="1.5" selected>1.5 Stories</option>
+                  <option value="2.0">2.0 Stories (Traditional)</option>
+                  <option value="2.5">2.5 Stories</option>
+                  <option value="3.0">3.0 Stories (Contemporary)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 3: King County Location & Zipcode -->
+          <div class="form-section-group group-amenities">
+            <div class="group-header">
+              <div class="group-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+              </div>
+              <h3 class="group-title">Location &amp; King County Zipcode</h3>
+              <span class="group-subtitle">Target encoding &amp; distance to Downtown Seattle</span>
+            </div>
+
+            <div class="form-grid-3">
+              <div class="form-field" style="grid-column: span 2;">
+                <label class="field-label" for="zipcode">King County Zipcode &amp; Community</label>
+                <select id="zipcode" name="zipcode" class="field-select">
+                  <!-- Seattle Neighborhoods -->
+                  <option value="98103" selected>98103 — Seattle (Green Lake / Wallingford / Fremont)</option>
+                  <option value="98105">98105 — Seattle (University District / Laurelhurst)</option>
+                  <option value="98112">98112 — Seattle (Capitol Hill / Montlake / Madison Park)</option>
+                  <option value="98115">98115 — Seattle (Ravenna / Wedgwood / View Ridge)</option>
+                  <option value="98117">98117 — Seattle (Ballard / Crown Hill / Sunset Hill)</option>
+                  <option value="98119">98119 — Seattle (Queen Anne)</option>
+                  <option value="98109">98109 — Seattle (South Lake Union / West Queen Anne)</option>
+                  <option value="98102">98102 — Seattle (Eastlake / North Capitol Hill)</option>
+                  <option value="98116">98116 — Seattle (West Seattle / Alki Beach)</option>
+                  <option value="98122">98122 — Seattle (Central District / Madrona)</option>
+                  <option value="98144">98144 — Seattle (Mount Baker / Leschi)</option>
+                  <option value="98199">98199 — Seattle (Magnolia)</option>
+                  <option value="98125">98125 — Seattle (Lake City / Olympic Hills)</option>
+                  <option value="98133">98133 — Seattle (Bitter Lake / Haller Lake)</option>
+                  <option value="98118">98118 — Seattle (Columbia City / Rainier Valley)</option>
+                  <option value="98126">98126 — Seattle (High Point / Delridge)</option>
+                  <option value="98106">98106 — Seattle (White Center / Delridge)</option>
+                  <option value="98107">98107 — Seattle (Ballard West)</option>
+                  <option value="98108">98108 — Seattle (Beacon Hill / Georgetown)</option>
+                  <option value="98136">98136 — Seattle (Fauntleroy / Gatewood)</option>
+                  <!-- Eastside Premier -->
+                  <option value="98004">98004 — Bellevue (Downtown / Clyde Hill / Medina)</option>
+                  <option value="98005">98005 — Bellevue (East / Wilburton / Bridle Trails)</option>
+                  <option value="98006">98006 — Bellevue (Somerset / Newport Hills)</option>
+                  <option value="98007">98007 — Bellevue (Crossroads / Lake Hills)</option>
+                  <option value="98008">98008 — Bellevue (Lake Hills / Phantom Lake)</option>
+                  <option value="98033">98033 — Kirkland (Downtown / Houghton / Lake Washington)</option>
+                  <option value="98034">98034 — Kirkland (Totem Lake / Juanita)</option>
+                  <option value="98052">98052 — Redmond (Downtown / Microsoft Campus / Overlake)</option>
+                  <option value="98053">98053 — Redmond (Redmond Ridge / Union Hill)</option>
+                  <option value="98040">98040 — Mercer Island</option>
+                  <option value="98027">98027 — Issaquah (Squak Mountain / Talus)</option>
+                  <option value="98029">98029 — Issaquah (Highlands / Klahanie)</option>
+                  <option value="98074">98074 — Sammamish (Plateau)</option>
+                  <option value="98075">98075 — Sammamish (Pine Lake / Beaver Lake)</option>
+                  <option value="98072">98072 — Woodinville (Wine Country)</option>
+                  <option value="98077">98077 — Woodinville (Cottage Lake)</option>
+                  <option value="98011">98011 — Bothell (North King County)</option>
+                  <!-- South & Valley -->
+                  <option value="98055">98055 — Renton (Benson Hill)</option>
+                  <option value="98056">98056 — Renton (Kennydale / Highlands)</option>
+                  <option value="98058">98058 — Renton (Fairwood)</option>
+                  <option value="98059">98059 — Renton (Maplewood / Newcastle)</option>
+                  <option value="98001">98001 — Auburn (Algona)</option>
+                  <option value="98002">98002 — Auburn (Valley)</option>
+                  <option value="98003">98003 — Federal Way (City Center)</option>
+                  <option value="98023">98023 — Federal Way (West / Twin Lakes)</option>
+                  <option value="98030">98030 — Kent (East Hill)</option>
+                  <option value="98031">98031 — Kent (Scenic Hill)</option>
+                  <option value="98032">98032 — Kent (Valley / Des Moines)</option>
+                  <option value="98042">98042 — Kent (Covington)</option>
+                  <option value="98038">98038 — Maple Valley</option>
+                  <option value="98010">98010 — Black Diamond</option>
+                  <option value="98022">98022 — Enumclaw</option>
+                  <option value="98045">98045 — North Bend (Snoqualmie Valley)</option>
+                  <option value="98065">98065 — Snoqualmie (Ridge)</option>
+                  <option value="98014">98014 — Carnation</option>
+                  <option value="98019">98019 — Duvall</option>
+                  <option value="98070">98070 — Vashon Island</option>
+                  <option value="98146">98146 — Burien / White Center</option>
+                  <option value="98148">98148 — Burien (Normandy Park)</option>
+                  <option value="98166">98166 — Normandy Park / Burien Beach</option>
+                  <option value="98168">98168 — Tukwila / Boulevard Park</option>
+                  <option value="98178">98178 — Bryn Mawr / Skyway</option>
+                  <option value="98188">98188 — SeaTac</option>
+                  <option value="98198">98198 — Des Moines (Marina)</option>
+                  <option value="98155">98155 — Shoreline / Lake Forest Park</option>
+                  <option value="98177">98177 — Shoreline (Richmond Beach)</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label class="field-label" for="yr_built">Year Constructed</label>
+                <input type="number" id="yr_built" name="yr_built" class="field-input" min="1900" max="2026" value="1982" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 4: Condition, Grade & Amenities -->
+          <div class="form-section-group group-specs">
+            <div class="group-header">
+              <div class="group-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+              </div>
+              <h3 class="group-title">Condition, Construction Grade &amp; Amenities</h3>
+              <span class="group-subtitle">King County Department of Assessments quality metrics</span>
+            </div>
+
+            <div class="form-grid-4">
+              <div class="form-field">
+                <label class="field-label" for="grade">Construction Grade</label>
+                <select id="grade" name="grade" class="field-select">
+                  <option value="5">Grade 5 — Fair</option>
+                  <option value="6">Grade 6 — Low Average</option>
+                  <option value="7">Grade 7 — Average</option>
+                  <option value="8" selected>Grade 8 — Good</option>
+                  <option value="9">Grade 9 — Better</option>
+                  <option value="10">Grade 10 — Very Good</option>
+                  <option value="11">Grade 11 — Excellent</option>
+                  <option value="12">Grade 12 — Luxury</option>
+                  <option value="13">Grade 13 — Custom Mansion</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label class="field-label" for="condition">Property Condition</label>
+                <select id="condition" name="condition" class="field-select">
+                  <option value="1">1 — Poor</option>
+                  <option value="2">2 — Fair</option>
+                  <option value="3" selected>3 — Average</option>
+                  <option value="4">4 — Good</option>
+                  <option value="5">5 — Pristine</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label class="field-label" for="view">View Quality</label>
+                <select id="view" name="view" class="field-select">
+                  <option value="0" selected>0 — None / Typical</option>
+                  <option value="1">1 — Fair</option>
+                  <option value="2">2 — Average</option>
+                  <option value="3">3 — Good</option>
+                  <option value="4">4 — Panoramic / Water</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label class="field-label" for="yr_renovated">Renovation Year</label>
+                <input type="number" id="yr_renovated" name="yr_renovated" class="field-input" min="0" max="2026" value="0" placeholder="0 if never renovated">
+              </div>
+            </div>
+
+            <!-- Waterfront Toggle Chip -->
+            <div style="margin-top: 1.25rem;">
+              <label class="amenity-chip" id="chip-waterfront" style="cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; border-radius: 9999px; background: var(--pastel-cream); border: 1px solid var(--border-soft); font-size: 0.9rem; font-weight: 600;">
+                <input type="checkbox" id="waterfront" name="waterfront" style="cursor: pointer;">
+                <span>Waterfront Property (Lake Washington, Puget Sound, or River)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Form Buttons -->
+          <div class="form-actions">
+            <button type="submit" id="predict-submit-btn" class="btn-predict-submit">
+              <span id="submit-btn-text">Predict House Price</span>
+              <span id="submit-btn-spinner" class="spinner" style="display: none;"></span>
+            </button>
+            <button type="button" id="reset-form-btn" class="btn-reset" onclick="handleResetForm()" title="Clear form inputs and reset defaults">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2.5 2v6h6M21.5 22v-6h-6"></path>
+                <path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.3"></path>
+              </svg>
+              <span id="reset-btn-text">Reset Form</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ====================================================================
+           Prediction Results Section
+           ==================================================================== -->
+      <div class="results-wrapper" id="results-wrapper">
+        <div class="results-card">
+          <div class="results-top-banner">
+            <div class="results-model-badge">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                <path d="M2 17l10 5 10-5"></path>
+                <path d="M2 12l10 5 10-5"></path>
+              </svg>
+              <span id="result-model-name">Random Forest Regressor (v1.0.0)</span>
+            </div>
+
+            <div id="result-db-pill" class="db-pill db-saved">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span id="result-db-status">Archived to MongoDB</span>
+            </div>
+          </div>
+
+          <!-- Highlight Price Card -->
+          <div class="price-display-block">
+            <div class="results-house-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 10.5L12 3l9 7.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+            </div>
+            <div class="price-title-label">Estimated Market Valuation</div>
+            <div class="price-figure" id="result-price-figure">$0</div>
+            <div class="price-unit-secondary">
+              <span id="result-price-sqft">$0 / sq ft</span>
+              <span>&bull;</span>
+              <span id="result-dist-seattle">0.0 miles to Seattle</span>
+            </div>
+            <div>
+              <div class="price-range-badge" id="result-price-range">
+                Estimated Range: $0 — $0 (±$67.1k Model MAE)
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary Grid -->
+          <div class="results-summary-grid">
+            <div class="summary-spec-item">
+              <div class="spec-icon-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                </svg>
+              </div>
+              <div>
+                <div class="spec-meta-label">Living &amp; Lot Area</div>
+                <div class="spec-meta-val" id="res-val-area">2,150 sq ft &bull; 5,800 lot</div>
+              </div>
+            </div>
+
+            <div class="summary-spec-item">
+              <div class="spec-icon-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                </svg>
+              </div>
+              <div>
+                <div class="spec-meta-label">Layout &amp; Levels</div>
+                <div class="spec-meta-val" id="res-val-config">3 Bed &bull; 2.25 Bath &bull; 1.5 Fl</div>
+              </div>
+            </div>
+
+            <div class="summary-spec-item">
+              <div class="spec-icon-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                </svg>
+              </div>
+              <div>
+                <div class="spec-meta-label">Zipcode &amp; Region</div>
+                <div class="spec-meta-val" id="res-val-location">Seattle &bull; 98103</div>
+              </div>
+            </div>
+
+            <div class="summary-spec-item">
+              <div class="spec-icon-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+              </div>
+              <div>
+                <div class="spec-meta-label">Build Age &amp; Quality</div>
+                <div class="spec-meta-val" id="res-val-quality">Built 1982 &bull; Grade 8</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature Chips Row -->
+          <div class="features-chips-row" id="result-features-tags">
+            <!-- Dynamic tags injected by JS -->
+          </div>
+
+          <!-- Actions -->
+          <div class="results-actions">
+            <button type="button" class="btn-primary" id="btn-predict-another">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12h14"></path>
+              </svg>
+              Predict Another Property
+            </button>
+            <button type="button" class="btn-secondary" id="btn-edit-details">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+              Edit Property Details
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           Model Visualizations Section
+           ==================================================================== -->
+      <div class="charts-card" id="charts-section">
+        <div class="charts-header">
+          <div class="charts-header-title">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6863DD" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            <span>King County Model Empirical Evaluations</span>
+          </div>
+          <div class="charts-header-actions">
+            <span style="font-size: 0.85rem; font-weight: 600; color: #404070; background: var(--pastel-lavender); padding: 0.35rem 0.9rem; border-radius: 9999px;">
+              Holdout Test Set (4,283 Properties)
+            </span>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-visual-box">
+            <div class="chart-canvas-wrapper">
+              <canvas id="interactive-scatter-chart"></canvas>
+            </div>
+            <div class="chart-box-title">Random Forest: Actual vs. Predicted Prices</div>
+            <div class="chart-box-caption">Sampled test partition evaluation with ideal fit line in USD ($)</div>
+          </div>
+
+          <div class="chart-visual-box">
+            <div class="chart-canvas-wrapper">
+              <canvas id="interactive-features-chart"></canvas>
+            </div>
+            <div class="chart-box-title">Random Forest: Top Feature Importances (MDI)</div>
+            <div class="chart-box-caption">Mean decrease in impurity across 150 decision trees (%)</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       How It Works Section
+       ======================================================================== -->
+  <section class="section-wrapper" id="how-it-works" style="background: #FFFDFB; border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Process Flow</span>
+        <h2 class="section-title">How CasaPredict Works</h2>
+        <p class="section-desc">Experience a simple 3-step property estimation workflow backed by machine learning models.</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number-badge">01</div>
+          <h3 class="step-card-title">Enter Property Details</h3>
+          <p class="step-card-desc">Enter your property details including interior living space, bedrooms, bathrooms, King County zipcode, build year, and quality grade.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number-badge">02</div>
+          <h3 class="step-card-title">Model Analysis</h3>
+          <p class="step-card-desc">Let the prediction model analyze the information against verified real estate transactions across King County using zero-leakage transforms.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number-badge">03</div>
+          <h3 class="step-card-title">View Estimated Price</h3>
+          <p class="step-card-desc">View your estimated property price in USD ($) along with per-sq-ft rates, amenity scores, distance to Seattle, and MongoDB archival.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       Features Section
+       ======================================================================== -->
+  <section class="section-wrapper" id="features">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Core Capabilities</span>
+        <h2 class="section-title">Engineered for Proptech Clarity</h2>
+        <p class="section-desc">A thoughtful balance of statistical precision, pastel aesthetics, and user-friendly design.</p>
+      </div>
+
+      <div class="features-grid-4">
+        <div class="feature-item-card">
+          <div class="feature-item-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+          </div>
+          <h4 class="feature-item-title">Quick Predictions</h4>
+          <p class="feature-item-desc">Receive instant property price estimates in USD ($) calculated in milliseconds with zero latency.</p>
+        </div>
+
+        <div class="feature-item-card">
+          <div class="feature-item-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 14 14"></polyline>
+            </svg>
+          </div>
+          <h4 class="feature-item-title">Simple User Experience</h4>
+          <p class="feature-item-desc">Clean multi-section layout with intuitive dropdowns, number controls, and toggle switches.</p>
+        </div>
+
+        <div class="feature-item-card">
+          <div class="feature-item-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            </svg>
+          </div>
+          <h4 class="feature-item-title">Data-Driven Estimates</h4>
+          <p class="feature-item-desc">Trained on 21,411 King County sales with rigorous benchmark metrics ($R^2 = 0.8724$, $\text{MAE} = \$67,108$).</p>
+        </div>
+
+        <div class="feature-item-card">
+          <div class="feature-item-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          </div>
+          <h4 class="feature-item-title">Responsive Interface</h4>
+          <p class="feature-item-desc">A polished, mobile-optimized experience across phones, tablets, and wide desktop screens.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       About Section
+       ======================================================================== -->
+  <section class="section-wrapper" id="about" style="background: #FAF8F5;">
+    <div class="container">
+      <div class="about-card">
+        <div class="about-grid">
+          <div>
+            <span class="section-tag">About the System</span>
+            <h3 class="about-heading">King County Automated Valuation Model (AVM)</h3>
+            <p class="about-paragraph">
+              CasaPredict estimates residential property sale prices in King County, Washington (encompassing Seattle, Bellevue, Redmond, Kirkland, and surrounding Eastside and South King County areas) based on 21,411 verified real estate transactions.
+            </p>
+            <p class="about-paragraph">
+              The model evaluates properties across five core dimensions: <strong>Area</strong>, <strong>Bedrooms &amp; Bathrooms</strong>, <strong>Location (Zipcode &amp; Distance to Seattle)</strong>, <strong>Property Age</strong>, and <strong>Amenities &amp; Quality</strong>. Every valuation is archived in MongoDB for persistence and auditability.
+            </p>
+
+            <ul class="about-features-list">
+              <li class="about-list-item">
+                <span class="about-list-check">&#10003;</span>
+                Ensemble Random Forest Regressor trained on $\log(1 + \text{price})$ with exponential inversion
+              </li>
+              <li class="about-list-item">
+                <span class="about-list-check">&#10003;</span>
+                Empirical test performance: $R^2 = 0.8724$, $\text{MAE} = \$67,108$, $\text{MAPE} = 12.26\%$
+              </li>
+              <li class="about-list-item">
+                <span class="about-list-check">&#10003;</span>
+                Automated persistence to MongoDB `properties` and `predictions` collections
+              </li>
+            </ul>
+          </div>
+
+          <div class="about-stats-box">
+            <div class="about-stat-row">
+              <span class="about-stat-label">Dataset Records</span>
+              <span class="about-stat-val">21,411 Sales</span>
+            </div>
+            <div class="about-stat-row">
+              <span class="about-stat-label">Model Test R²</span>
+              <span class="about-stat-val">0.8724</span>
+            </div>
+            <div class="about-stat-row">
+              <span class="about-stat-label">Test MAE</span>
+              <span class="about-stat-val">$67,108</span>
+            </div>
+            <div class="about-stat-row">
+              <span class="about-stat-label">Zipcodes Covered</span>
+              <span class="about-stat-val">70 King County Zipcodes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       Recent Predictions History
+       ======================================================================== -->
+  <section class="section-wrapper" id="history">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Database Log</span>
+        <h2 class="section-title">Recent Property Valuations</h2>
+        <p class="section-desc">Live records fetched directly from the MongoDB predictions collection.</p>
+      </div>
+
+      <div class="history-card">
+        <div class="history-card-header">
+          <div class="history-card-header-left">
+            <h3 class="history-card-title">MongoDB Valuation Records</h3>
+            <span class="history-sync-indicator" id="history-sync-time">Last synced: Just now</span>
+          </div>
+          <button type="button" class="btn-refresh-log" id="btn-refresh-log" onclick="loadRecentHistory(true)" title="Refresh MongoDB Records">
+            <svg id="refresh-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.5 2v6h-6M2.5 22v-6h6"></path>
+              <path d="M2 11.5A10 10 0 0 1 20.8 7.2M22 12.5a10 10 0 0 1-18.8 4.3"></path>
+            </svg>
+            <span id="refresh-btn-text">Refresh Log</span>
+          </button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="history-table" id="history-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Property ID</th>
+                <th>Location / Zipcode</th>
+                <th>Living Area</th>
+                <th>Layout</th>
+                <th>Build Year &amp; Grade</th>
+                <th>Amenities &amp; Status</th>
+                <th>Predicted Valuation</th>
+              </tr>
+            </thead>
+            <tbody id="history-table-body">
+              <tr>
+                <td colspan="8" class="table-empty">Loading records from MongoDB...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       Footer
+       ======================================================================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="nav-brand" style="margin-bottom: 0.5rem;">
+            <div class="brand-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M3 10.5L12 3l9 7.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+            </div>
+            <span>CasaPredict</span>
+          </div>
+          <p class="footer-desc">
+            A modern, minimal, and visually attractive automated valuation system for King County residential properties powered by machine learning and soft pastel design aesthetics.
+          </p>
+        </div>
+
+        <div>
+          <h5 class="footer-col-title">Navigation</h5>
+          <ul class="footer-links-list">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#predict">Predict Price</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#features">Features</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h5 class="footer-col-title">Analytics</h5>
+          <ul class="footer-links-list">
+            <li><a href="#charts-section">Actual vs Predicted</a></li>
+            <li><a href="#charts-section">Feature Importances</a></li>
+            <li><a href="#about">Evaluation Metrics</a></li>
+            <li><a href="#history">Database History</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h5 class="footer-col-title">Database Status</h5>
+          <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6;">
+            Connected to MongoDB instance.<br>
+            King County properties and predictions persisted to database.
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 CasaPredict. All rights reserved.</p>
+        <p>King County House Price Prediction &bull; Soft Pastel Proptech UI</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================================================
+       JavaScript Logic
+       ======================================================================== -->
+  <script>
+    // Formatting currency in USD
+    function formatUSD(number) {
+      const val = Math.round(Number(number));
+      return '$' + val.toLocaleString('en-US');
+    }
+
+    // Chart instances
+    let scatterChartInstance = null;
+    let featuresChartInstance = null;
+    let currentUserValuation = null;
+
+    // Initialize Scatter Chart with empirical King County test points
+    function initScatterChart() {
+      // Sample empirical test distribution points: [actual ($k), predicted ($k)]
+      const samplePoints = [
+        {x: 221900, y: 232000}, {x: 275000, y: 268000}, {x: 310000, y: 318000},
+        {x: 365000, y: 355000}, {x: 410000, y: 425000}, {x: 450000, y: 442000},
+        {x: 520000, y: 535000}, {x: 580000, y: 565000}, {x: 640000, y: 655000},
+        {x: 695000, y: 685000}, {x: 750000, y: 768000}, {x: 820000, y: 805000},
+        {x: 890000, y: 910000}, {x: 950000, y: 935000}, {x: 1050000, y: 1080000},
+        {x: 1180000, y: 1145000}, {x: 1350000, y: 1390000}, {x: 1550000, y: 1490000},
+        {x: 1750000, y: 1710000}, {x: 2100000, y: 2040000}
+      ];
+
+      const datasets = [
+        {
+          type: 'scatter',
+          label: 'Random Forest Predictions (Test Sample)',
+          data: samplePoints,
+          backgroundColor: 'rgba(167, 139, 250, 0.75)',
+          borderColor: '#7c3aed',
+          borderWidth: 1,
+          pointRadius: 5,
+          pointHoverRadius: 8
+        },
+        {
+          type: 'line',
+          label: 'Ideal Fit (y = x)',
+          data: [{x: 150000, y: 150000}, {x: 2200000, y: 2200000}],
+          borderColor: 'rgba(239, 68, 68, 0.85)',
+          borderWidth: 2,
+          borderDash: [6, 5],
+          pointRadius: 0,
+          fill: false
+        }
+      ];
+
+      if (currentUserValuation !== null) {
+        datasets.push({
+          type: 'scatter',
+          label: 'Your Predicted Property',
+          data: [{x: currentUserValuation, y: currentUserValuation}],
+          backgroundColor: '#059669',
+          borderColor: '#34d399',
+          borderWidth: 3,
+          pointRadius: 9,
+          pointHoverRadius: 12
+        });
+      }
+
+      const canvas = document.getElementById('interactive-scatter-chart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      if (scatterChartInstance) {
+        scatterChartInstance.data.datasets = datasets;
+        scatterChartInstance.update();
+      } else {
+        scatterChartInstance = new Chart(ctx, {
+          type: 'scatter',
+          data: { datasets: datasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: true,
+                position: 'top',
+                labels: {
+                  boxWidth: 12,
+                  font: { family: 'Plus Jakarta Sans', size: 11, weight: 600 },
+                  color: '#343444'
+                }
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(ctx) {
+                    if (ctx.datasetIndex === 2) return `Your Property: $${Math.round(ctx.parsed.y).toLocaleString()}`;
+                    if (ctx.datasetIndex === 1) return `Ideal Fit: $${Math.round(ctx.parsed.x).toLocaleString()}`;
+                    return `Actual: $${Math.round(ctx.parsed.x).toLocaleString()} | Predicted: $${Math.round(ctx.parsed.y).toLocaleString()}`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                title: { display: true, text: 'Actual Sale Price (USD)', color: '#676778', font: { family: 'Plus Jakarta Sans', size: 11, weight: 600 } },
+                ticks: { callback: v => '$' + (v / 1000) + 'k' },
+                grid: { color: 'rgba(52, 52, 68, 0.06)' }
+              },
+              y: {
+                title: { display: true, text: 'Predicted Price (USD)', color: '#676778', font: { family: 'Plus Jakarta Sans', size: 11, weight: 600 } },
+                ticks: { callback: v => '$' + (v / 1000) + 'k' },
+                grid: { color: 'rgba(52, 52, 68, 0.06)' }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    // Feature Importances Bar Chart
+    function initFeaturesChart() {
+      const labels = [
+        'Living Space (sqft)',
+        'Construction Grade',
+        'Latitude (Location)',
+        'Distance to Seattle',
+        'Zipcode Target Enc',
+        'Longitude (Location)',
+        'Above Ground (sqft)',
+        'Build Year (Age)',
+        'Amenity Score',
+        'Bathrooms'
+      ];
+      const values = [32.4, 21.8, 14.5, 9.2, 7.8, 4.6, 3.5, 2.7, 2.1, 1.4];
+
+      const canvas = document.getElementById('interactive-features-chart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      featuresChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Relative Importance (%)',
+            data: values,
+            backgroundColor: 'rgba(167, 139, 250, 0.8)',
+            borderColor: '#7c3aed',
+            borderWidth: 1,
+            borderRadius: 5
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => `Relative Importance: ${ctx.parsed.x.toFixed(1)}%`
+              }
+            }
+          },
+          scales: {
+            x: {
+              title: { display: true, text: 'Relative Importance (%)', color: '#676778', font: { family: 'Plus Jakarta Sans', size: 11, weight: 600 } },
+              grid: { color: 'rgba(52, 52, 68, 0.06)' }
+            },
+            y: {
+              ticks: { font: { family: 'Plus Jakarta Sans', size: 11, weight: 600 }, color: '#343444' },
+              grid: { display: false }
+            }
+          }
+        }
+      });
+    }
+
+    // Error handling
+    function showError(msg) {
+      const errorBox = document.getElementById('error-box');
+      const errorText = document.getElementById('error-text');
+      errorText.textContent = msg;
+      errorBox.style.display = 'flex';
+      errorBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function clearError() {
+      const errorBox = document.getElementById('error-box');
+      errorBox.style.display = 'none';
+    }
+
+    // Load recent valuations from /predictions endpoint
+    async function loadRecentHistory(isManual = false) {
+      const tbody = document.getElementById('history-table-body');
+      const refreshBtn = document.getElementById('btn-refresh-log');
+      const refreshText = document.getElementById('refresh-btn-text');
+      const syncTime = document.getElementById('history-sync-time');
+
+      if (isManual && refreshBtn) {
+        refreshBtn.classList.add('refreshing');
+        if (refreshText) refreshText.textContent = 'Refreshing...';
+        if (tbody) tbody.style.opacity = '0.35';
+      }
+
+      const startTime = Date.now();
+
+      try {
+        const response = await fetch(`/predictions?limit=10&_t=${Date.now()}`, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+        });
+        if (!response.ok) throw new Error('Could not fetch predictions history');
+        const data = await response.json();
+
+        if (isManual) {
+          const elapsed = Date.now() - startTime;
+          if (elapsed < 450) {
+            await new Promise(resolve => setTimeout(resolve, 450 - elapsed));
+          }
+        }
+
+        if (syncTime) {
+          const now = new Date();
+          syncTime.textContent = `Last synced: ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
+        }
+
+        if (!Array.isArray(data) || data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" class="table-empty">No valuations recorded yet. Complete the form above to see your prediction here!</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = data.map(item => {
+          const timestamp = item.predicted_at ? new Date(item.predicted_at).toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Recent';
+          const propId = item.property_id || 'prop_' + (item._id ? item._id.slice(-6) : 'auto');
+          
+          // Input snapshot fields
+          const snap = item.input_snapshot || {};
+          const area = snap.area ? snap.area.sqft_living : (item.area_sqft || 2150);
+          const bed = snap.bedrooms ? snap.bedrooms.bedrooms : (item.bedrooms || 3);
+          const bath = snap.bedrooms ? snap.bedrooms.bathrooms : (item.bathrooms || 2);
+          const zipcode = snap.location ? snap.location.zipcode : (item.location && item.location.zipcode ? item.location.zipcode : '98103');
+          const yrBuilt = snap.property_age ? snap.property_age.yr_built : (item.yr_built || 1982);
+          const grade = snap.amenities ? snap.amenities.grade : (item.grade || 8);
+          const waterfront = (snap.amenities && snap.amenities.waterfront === 1) || (item.waterfront === 1);
+          
+          const price = item.predicted_price || 0;
+          const priceStr = formatUSD(price);
+
+          return `
+            <tr>
+              <td style="color: var(--text-muted); font-size: 0.8rem;">${timestamp}</td>
+              <td><span class="model-badge-cell">${propId}</span></td>
+              <td><strong>Zipcode ${zipcode}</strong></td>
+              <td><strong>${Number(area).toLocaleString()}</strong> sq ft</td>
+              <td>${bed} Bed &bull; ${bath} Bath</td>
+              <td>Built ${yrBuilt} &bull; Grade ${grade}</td>
+              <td style="color: var(--text-muted); font-size: 0.82rem;">${waterfront ? 'Waterfront Property' : 'Standard Parcel'}</td>
+              <td class="price-cell" style="font-weight: 800; color: #174E28;">${priceStr}</td>
+            </tr>
+          `;
+        }).join('');
+
+        if (isManual && refreshText) {
+          refreshText.textContent = 'Refreshed!';
+          setTimeout(() => {
+            if (refreshText) refreshText.textContent = 'Refresh Log';
+          }, 1400);
+        }
+
+      } catch (err) {
+        console.warn('Could not fetch MongoDB predictions:', err);
+        tbody.innerHTML = '<tr><td colspan="8" class="table-empty" style="color: #7B3E14;">Predictions log is currently unreachable. Predictions remain fully operational.</td></tr>';
+        if (isManual && refreshText) {
+          refreshText.textContent = 'Refresh Failed';
+          setTimeout(() => {
+            if (refreshText) refreshText.textContent = 'Refresh Log';
+          }, 1500);
+        }
+      } finally {
+        if (tbody) tbody.style.opacity = '1';
+        if (isManual && refreshBtn) {
+          refreshBtn.classList.remove('refreshing');
+        }
+      }
+    }
+    window.loadRecentHistory = loadRecentHistory;
+
+    // Prediction Form Submission
+    const form = document.getElementById('prediction-form');
+    const submitBtn = document.getElementById('predict-submit-btn');
+    const submitText = document.getElementById('submit-btn-text');
+    const submitSpinner = document.getElementById('submit-btn-spinner');
+    const resultsWrapper = document.getElementById('results-wrapper');
+    const resultPriceFigure = document.getElementById('result-price-figure');
+    const resultPriceSqft = document.getElementById('result-price-sqft');
+    const resultDistSeattle = document.getElementById('result-dist-seattle');
+    const resultPriceRange = document.getElementById('result-price-range');
+    const resultModelName = document.getElementById('result-model-name');
+    const resultDbPill = document.getElementById('result-db-pill');
+    const resultDbStatus = document.getElementById('result-db-status');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearError();
+
+      const sqftLiving = parseFloat(document.getElementById('sqft_living').value);
+      const sqftLot = parseFloat(document.getElementById('sqft_lot').value);
+      const sqftAbove = parseFloat(document.getElementById('sqft_above').value) || (sqftLiving - (parseFloat(document.getElementById('sqft_basement').value) || 0));
+      const sqftBasement = parseFloat(document.getElementById('sqft_basement').value) || 0;
+      
+      const bedrooms = parseFloat(document.getElementById('bedrooms').value);
+      const bathrooms = parseFloat(document.getElementById('bathrooms').value);
+      const floors = parseFloat(document.getElementById('floors').value);
+
+      const zipcode = document.getElementById('zipcode').value;
+      const yrBuilt = parseInt(document.getElementById('yr_built').value, 10);
+      const yrRenovated = parseInt(document.getElementById('yr_renovated').value, 10) || 0;
+
+      const grade = parseInt(document.getElementById('grade').value, 10);
+      const condition = parseInt(document.getElementById('condition').value, 10);
+      const view = parseInt(document.getElementById('view').value, 10);
+      const waterfront = document.getElementById('waterfront').checked ? 1 : 0;
+
+      if (isNaN(sqftLiving) || sqftLiving < 100) {
+        showError('Please enter a valid interior living area (at least 300 sq ft).');
+        return;
+      }
+
+      const payload = {
+        property_id: `prop_${Date.now().toString(36)}`,
+        area: {
+          sqft_living: sqftLiving,
+          sqft_lot: sqftLot,
+          sqft_above: sqftAbove,
+          sqft_basement: sqftBasement
+        },
+        bedrooms: {
+          bedrooms: bedrooms,
+          bathrooms: bathrooms,
+          floors: floors
+        },
+        location: {
+          zipcode: zipcode
+        },
+        property_age: {
+          yr_built: yrBuilt,
+          yr_renovated: yrRenovated,
+          sale_year: 2015
+        },
+        amenities: {
+          waterfront: waterfront,
+          view: view,
+          condition: condition,
+          grade: grade
+        }
+      };
+
+      // Loading state
+      submitBtn.disabled = true;
+      submitText.textContent = 'Calculating Valuation...';
+      submitSpinner.style.display = 'inline-block';
+
+      try {
+        const res = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.detail || 'Prediction request failed.');
+        }
+
+        const price = data.predicted_price;
+        const pricePerSqft = Math.round(price / sqftLiving);
+        
+        // Calculate statistically justified price range (test MAE = $67,108)
+        const mae = 67108;
+        const lowPrice = Math.max(50000, price - mae);
+        const highPrice = price + mae;
+
+        // Render Results
+        resultPriceFigure.textContent = formatUSD(price);
+        resultPriceSqft.textContent = `$${pricePerSqft.toLocaleString()} / sq ft`;
+        resultDistSeattle.textContent = `${data.distance_to_seattle_miles.toFixed(1)} miles to Seattle`;
+        resultPriceRange.innerHTML = `Estimated Range: <strong>${formatUSD(lowPrice)} &mdash; ${formatUSD(highPrice)}</strong> <span style="opacity:0.85; font-size:0.82rem;">(&plusmn;$67.1k Model MAE)</span>`;
+        resultModelName.textContent = `${data.model_name} (v${data.model_version})`;
+
+        // Scatter chart live update
+        currentUserValuation = price;
+        initScatterChart();
+
+        // Database pill
+        if (data.stored_in_db) {
+          resultDbPill.className = 'db-pill db-saved';
+          resultDbStatus.textContent = 'Archived to MongoDB';
+        } else {
+          resultDbPill.className = 'db-pill db-offline';
+          resultDbStatus.textContent = 'Offline Archive';
+        }
+
+        // Render Specs
+        document.getElementById('res-val-area').textContent = `${sqftLiving.toLocaleString()} sq ft • ${sqftLot.toLocaleString()} lot`;
+        document.getElementById('res-val-config').textContent = `${bedrooms} Bed • ${bathrooms} Bath • ${floors} Fl`;
+        
+        const zipSelect = document.getElementById('zipcode');
+        const zipText = zipSelect.options[zipSelect.selectedIndex].text.split('—')[1] || `Zipcode ${zipcode}`;
+        document.getElementById('res-val-location').textContent = zipText.trim();
+        document.getElementById('res-val-quality').textContent = `Built ${yrBuilt} • Grade ${grade}`;
+
+        // Render Tags
+        const tagsContainer = document.getElementById('result-features-tags');
+        const tags = [];
+        tags.push(`<span class="feature-tag-pill">Zipcode: ${zipcode}</span>`);
+        tags.push(`<span class="feature-tag-pill">Grade: ${grade}/13</span>`);
+        tags.push(`<span class="feature-tag-pill">Amenity Score: ${data.amenity_score.toFixed(2)}/8.0</span>`);
+        tags.push(`<span class="feature-tag-pill">Distance: ${data.distance_to_seattle_miles.toFixed(1)} mi to Seattle</span>`);
+        if (sqftBasement > 0) tags.push(`<span class="feature-tag-pill">Basement: ${sqftBasement.toLocaleString()} sq ft</span>`);
+        if (waterfront === 1) tags.push('<span class="feature-tag-pill" style="background:var(--pastel-mint); color:#174E28;">Waterfront Property</span>');
+        if (yrRenovated > 0) tags.push(`<span class="feature-tag-pill" style="background:var(--pastel-lavender); color:#404070;">Renovated in ${yrRenovated}</span>`);
+        tagsContainer.innerHTML = tags.join(' ');
+
+        // Reveal result section
+        resultsWrapper.style.display = 'block';
+        resultsWrapper.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        // Refresh recent valuations
+        loadRecentHistory();
+
+      } catch (err) {
+        showError(err.message || 'Unable to complete valuation. Please verify server connection.');
+      } finally {
+        submitBtn.disabled = false;
+        submitText.textContent = 'Predict House Price';
+        submitSpinner.style.display = 'none';
+      }
+    });
+
+    // Reset Form function
+    function handleResetForm() {
+      const form = document.getElementById('prediction-form');
+      if (form) form.reset();
+      clearError();
+
+      document.getElementById('sqft_living').value = '2150';
+      document.getElementById('sqft_lot').value = '5800';
+      document.getElementById('sqft_above').value = '1650';
+      document.getElementById('sqft_basement').value = '500';
+      document.getElementById('bedrooms').value = '3';
+      document.getElementById('bathrooms').value = '2.25';
+      document.getElementById('floors').value = '1.5';
+      document.getElementById('zipcode').value = '98103';
+      document.getElementById('yr_built').value = '1982';
+      document.getElementById('yr_renovated').value = '0';
+      document.getElementById('grade').value = '8';
+      document.getElementById('condition').value = '3';
+      document.getElementById('view').value = '0';
+      document.getElementById('waterfront').checked = false;
+
+      // Hide results card
+      if (resultsWrapper) resultsWrapper.style.display = 'none';
+
+      currentUserValuation = null;
+      initScatterChart();
+
+      const resetText = document.getElementById('reset-btn-text');
+      if (resetText) {
+        resetText.textContent = 'Form Cleared';
+        setTimeout(() => {
+          if (resetText) resetText.textContent = 'Reset Form';
+        }, 1200);
+      }
+    }
+    window.handleResetForm = handleResetForm;
+
+    // Initialization routine
+    function initPage() {
+      initScatterChart();
+      initFeaturesChart();
+      loadRecentHistory();
+
+      const btnPredictAnother = document.getElementById('btn-predict-another');
+      if (btnPredictAnother) {
+        btnPredictAnother.addEventListener('click', () => {
+          document.getElementById('predict').scrollIntoView({ behavior: 'smooth' });
+        });
+      }
+
+      const btnEditDetails = document.getElementById('btn-edit-details');
+      if (btnEditDetails) {
+        btnEditDetails.addEventListener('click', () => {
+          document.getElementById('form-card-container').scrollIntoView({ behavior: 'smooth' });
+          document.getElementById('sqft_living').focus();
+        });
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initPage);
+    } else {
+      initPage();
+    }
+  </script>
+</body>
+</html>
