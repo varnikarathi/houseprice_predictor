@@ -1,0 +1,68 @@
+{
+  "model_name": "Random Forest Regressor",
+  "version": "1.0.0",
+  "target": "log1p(price) inverted with expm1",
+  "feature_count": 24,
+  "features": [
+    "sqft_living",
+    "sqft_lot",
+    "sqft_above",
+    "sqft_basement",
+    "living_to_lot_ratio",
+    "has_basement",
+    "bedrooms",
+    "bathrooms",
+    "floors",
+    "bed_to_bath_ratio",
+    "sqft_per_room",
+    "lat",
+    "long",
+    "distance_to_seattle",
+    "zipcode_num",
+    "zipcode_target_enc",
+    "age",
+    "is_renovated",
+    "years_since_renovation",
+    "waterfront",
+    "view",
+    "condition",
+    "grade",
+    "amenity_score"
+  ],
+  "input_groups": [
+    "area",
+    "bedrooms",
+    "location",
+    "property_age",
+    "amenities"
+  ],
+  "best_hyperparameters": {
+    "n_estimators": 150,
+    "min_samples_leaf": 1,
+    "max_features": 0.5,
+    "max_depth": 15
+  },
+  "seattle_center": {
+    "lat": 47.6062,
+    "long": -122.3321
+  },
+  "global_median_log_price": 13.022268933242957,
+  "zipcode_count": 70,
+  "test_metrics": {
+    "r2_price": 0.8724,
+    "mae_price": 67108.53,
+    "rmse_price": 129170.55,
+    "mape_price": 12.26,
+    "r2_log": 0.8979,
+    "mae_log": 0.1199,
+    "rmse_log": 0.1688
+  },
+  "cv_metrics": {
+    "cv_r2_log_mean": 0.8964,
+    "cv_r2_log_std": 0.0048,
+    "cv_r2_price_mean": 0.8809,
+    "cv_r2_price_std": 0.0103,
+    "cv_mae_price_mean": 66415.45,
+    "cv_mae_price_std": 1818.61
+  }
+}
