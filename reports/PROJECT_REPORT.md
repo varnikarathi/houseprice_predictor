@@ -10,9 +10,11 @@
 ---
 
 ## 🔗 Official Repository Link
-* **Official PDF Report (15 Pages, Academic & Technical)**: [King_County_House_Price_Prediction_Report_Varnika_Rathi.pdf](King_County_House_Price_Prediction_Report_Varnika_Rathi.pdf)
-* **Author / Candidate**: Varnika Rathi | **Reg No**: 12318240 | **Roll No**: 66
+* **Author**: Varnika Rathi | **Reg No**: 12318240 | **Roll No**: 66
 * **GitHub Repository**: [https://github.com/varnikarathi/houseprice_predictor](https://github.com/varnikarathi/houseprice_predictor)
+* **Official 15-Page PDF Report**: [King_County_House_Price_Prediction_Report_Varnika_Rathi.pdf](King_County_House_Price_Prediction_Report_Varnika_Rathi.pdf)
+* **Production Web UI**: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+* **Interactive Swagger Docs**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 * **Author / Maintainer**: `varnikarathi` (`148542476+varnikarathi@users.noreply.github.com`)
 * **Production Web UI**: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 * **Interactive OpenAPI / Swagger Documentation**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
@@ -161,7 +163,7 @@ The frontend implements a soft pastel color palette:
 * **Dark Charcoal Text (`#343444`)**: High-contrast, WCAG AAA-compliant typography using Google Fonts **Plus Jakarta Sans** and **Inter**.
 
 ![System Architecture](./figures/system_architecture.png)
-![UI Demo Preview](./figures/dashboard_demo_preview.png)
+![UI Demo Preview](./figures/actual_casapredict_dashboard.png)
 
 ---
 

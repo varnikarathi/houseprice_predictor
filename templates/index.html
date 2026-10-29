@@ -1297,6 +1297,14 @@
         // Refresh recent valuations
         loadRecentHistory();
 
+      // Auto-trigger sample valuation on page load for immediate visual preview
+      setTimeout(() => {
+        const formElem = document.getElementById('prediction-form');
+        if (formElem) {
+          formElem.requestSubmit();
+        }
+      }, 400);
+
       } catch (err) {
         showError(err.message || 'Unable to complete valuation. Please verify server connection.');
       } finally {
