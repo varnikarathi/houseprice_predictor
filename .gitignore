@@ -44,3 +44,9 @@ htmlcov/
 
 # Local environment variables
 .env
+
+# Presentation and Report files (stored locally, excluded from git)
+reports/*.pdf
+reports/*.pptx
+reports/*.docx
+reports/PROJECT_REPORT.md
