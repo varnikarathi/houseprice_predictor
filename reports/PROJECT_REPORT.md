@@ -10,6 +10,8 @@
 ---
 
 ## 🔗 Official Repository Link
+* **Official PDF Report (15 Pages, Academic & Technical)**: [King_County_House_Price_Prediction_Report_Varnika_Rathi.pdf](King_County_House_Price_Prediction_Report_Varnika_Rathi.pdf)
+* **Author / Candidate**: Varnika Rathi | **Reg No**: 12318240 | **Roll No**: 66
 * **GitHub Repository**: [https://github.com/varnikarathi/houseprice_predictor](https://github.com/varnikarathi/houseprice_predictor)
 * **Author / Maintainer**: `varnikarathi` (`148542476+varnikarathi@users.noreply.github.com`)
 * **Production Web UI**: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)

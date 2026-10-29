@@ -12,7 +12,8 @@ An end-to-end, production-grade Automated Valuation Model (AVM) estimating resid
 
 ## 🔗 Project Links & Documentation
 - **Official GitHub Repository**: [https://github.com/varnikarathi/houseprice_predictor](https://github.com/varnikarathi/houseprice_predictor)
-- **Comprehensive Project Report**: [reports/PROJECT_REPORT.md](reports/PROJECT_REPORT.md)
+- **Comprehensive 15-Page PDF Report (Varnika Rathi, Reg No: 12318240, Roll No: 66)**: [reports/King_County_House_Price_Prediction_Report_Varnika_Rathi.pdf](reports/King_County_House_Price_Prediction_Report_Varnika_Rathi.pdf)
+- **Comprehensive Project Markdown Report**: [reports/PROJECT_REPORT.md](reports/PROJECT_REPORT.md)
 - **Local Application URL**: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 - **Interactive Swagger API Docs**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
