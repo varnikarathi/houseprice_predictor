@@ -1062,7 +1062,62 @@
       errorBox.style.display = 'none';
     }
 
-    // Load recent valuations from /predictions endpoint
+    // Session valuation history
+    function getStoredHistory() {
+      try {
+        const stored = localStorage.getItem('casapredict_history');
+        return stored ? JSON.parse(stored) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveStoredHistory(list) {
+      try {
+        localStorage.setItem('casapredict_history', JSON.stringify(list.slice(0, 20)));
+      } catch (e) {}
+    }
+
+    function renderHistoryRows(items) {
+      const tbody = document.getElementById('history-table-body');
+      if (!tbody) return;
+
+      if (!Array.isArray(items) || items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="table-empty">No valuations recorded yet. Complete the form above to see your prediction here!</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = items.map(item => {
+        const propId = item.property_id || ('prop_' + (item._id ? item._id.slice(-6) : Date.now().toString(36)));
+        
+        // Input snapshot fields
+        const snap = item.input_snapshot || {};
+        const area = snap.area ? snap.area.sqft_living : (item.area_sqft || 2150);
+        const bed = (snap.bedrooms && typeof snap.bedrooms === 'object') ? snap.bedrooms.bedrooms : (snap.bedrooms || item.bedrooms || 3);
+        const bath = (snap.bedrooms && typeof snap.bedrooms === 'object') ? snap.bedrooms.bathrooms : (item.bathrooms || 2);
+        const zipcode = snap.location ? snap.location.zipcode : (item.location && item.location.zipcode ? item.location.zipcode : '98103');
+        const yrBuilt = snap.property_age ? snap.property_age.yr_built : (item.yr_built || 1982);
+        const grade = snap.amenities ? snap.amenities.grade : (item.grade || 8);
+        const waterfront = (snap.amenities && snap.amenities.waterfront === 1) || (item.waterfront === 1);
+        
+        const price = item.predicted_price || 0;
+        const priceStr = formatUSD(price);
+
+        return `
+          <tr>
+            <td><span class="model-badge-cell">${propId}</span></td>
+            <td><strong>Zipcode ${zipcode}</strong></td>
+            <td><strong>${Number(area).toLocaleString()}</strong> sq ft</td>
+            <td>${bed} Bed &bull; ${bath} Bath</td>
+            <td>Built ${yrBuilt} &bull; Grade ${grade}</td>
+            <td style="color: var(--text-muted); font-size: 0.82rem;">${waterfront ? 'Waterfront Property' : 'Standard Parcel'}</td>
+            <td class="price-cell" style="font-weight: 800; color: #174E28;">${priceStr}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Load recent valuations or reset log when clicking "Refresh Log"
     async function loadRecentHistory(isManual = false) {
       const tbody = document.getElementById('history-table-body');
       const refreshBtn = document.getElementById('btn-refresh-log');
@@ -1071,25 +1126,49 @@
 
       if (isManual && refreshBtn) {
         refreshBtn.classList.add('refreshing');
-        if (refreshText) refreshText.textContent = 'Refreshing...';
+        if (refreshText) refreshText.textContent = 'Clearing Logs...';
         if (tbody) tbody.style.opacity = '0.35';
       }
 
-      const startTime = Date.now();
+      // If user clicks "Refresh Log", remove all previous logs and start fresh
+      if (isManual) {
+        localStorage.removeItem('casapredict_history');
+        if (syncTime) {
+          const now = new Date();
+          syncTime.textContent = `Last synced: ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })} (Fresh Log)`;
+        }
+        if (tbody) {
+          tbody.innerHTML = '<tr><td colspan="7" class="table-empty">All previous logs cleared. New valuations will start here!</td></tr>';
+          tbody.style.opacity = '1';
+        }
+        if (refreshText) {
+          refreshText.textContent = 'Logs Cleared!';
+          setTimeout(() => {
+            if (refreshText) refreshText.textContent = 'Refresh Log';
+            if (refreshBtn) refreshBtn.classList.remove('refreshing');
+          }, 1200);
+        }
+        return;
+      }
 
+      // Normal load (on page startup or after prediction)
       try {
-        const response = await fetch(`/predictions?limit=10&_t=${Date.now()}`, {
-          cache: 'no-store',
-          headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
-        });
-        if (!response.ok) throw new Error('Could not fetch predictions history');
-        const data = await response.json();
-
-        if (isManual) {
-          const elapsed = Date.now() - startTime;
-          if (elapsed < 450) {
-            await new Promise(resolve => setTimeout(resolve, 450 - elapsed));
+        let history = getStoredHistory();
+        
+        // Try fetching any server predictions if available
+        try {
+          const response = await fetch(`/predictions?limit=10&_t=${Date.now()}`, {
+            cache: 'no-store',
+            headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+          });
+          if (response.ok) {
+            const serverData = await response.json();
+            if (Array.isArray(serverData) && serverData.length > 0) {
+              history = serverData;
+            }
           }
+        } catch (e) {
+          // Server predictions unreachable, fallback gracefully to stored history
         }
 
         if (syncTime) {
@@ -1097,61 +1176,12 @@
           syncTime.textContent = `Last synced: ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
         }
 
-        if (!Array.isArray(data) || data.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="7" class="table-empty">No valuations recorded yet. Complete the form above to see your prediction here!</td></tr>';
-          return;
-        }
-
-        tbody.innerHTML = data.map(item => {
-          const propId = item.property_id || 'prop_' + (item._id ? item._id.slice(-6) : 'auto');
-          
-          // Input snapshot fields
-          const snap = item.input_snapshot || {};
-          const area = snap.area ? snap.area.sqft_living : (item.area_sqft || 2150);
-          const bed = snap.bedrooms ? snap.bedrooms.bedrooms : (item.bedrooms || 3);
-          const bath = snap.bedrooms ? snap.bedrooms.bathrooms : (item.bathrooms || 2);
-          const zipcode = snap.location ? snap.location.zipcode : (item.location && item.location.zipcode ? item.location.zipcode : '98103');
-          const yrBuilt = snap.property_age ? snap.property_age.yr_built : (item.yr_built || 1982);
-          const grade = snap.amenities ? snap.amenities.grade : (item.grade || 8);
-          const waterfront = (snap.amenities && snap.amenities.waterfront === 1) || (item.waterfront === 1);
-          
-          const price = item.predicted_price || 0;
-          const priceStr = formatUSD(price);
-
-          return `
-            <tr>
-              <td><span class="model-badge-cell">${propId}</span></td>
-              <td><strong>Zipcode ${zipcode}</strong></td>
-              <td><strong>${Number(area).toLocaleString()}</strong> sq ft</td>
-              <td>${bed} Bed &bull; ${bath} Bath</td>
-              <td>Built ${yrBuilt} &bull; Grade ${grade}</td>
-              <td style="color: var(--text-muted); font-size: 0.82rem;">${waterfront ? 'Waterfront Property' : 'Standard Parcel'}</td>
-              <td class="price-cell" style="font-weight: 800; color: #174E28;">${priceStr}</td>
-            </tr>
-          `;
-        }).join('');
-
-        if (isManual && refreshText) {
-          refreshText.textContent = 'Refreshed!';
-          setTimeout(() => {
-            if (refreshText) refreshText.textContent = 'Refresh Log';
-          }, 1400);
-        }
-
+        renderHistoryRows(history);
       } catch (err) {
-        console.warn('Could not fetch MongoDB predictions:', err);
-        tbody.innerHTML = '<tr><td colspan="7" class="table-empty" style="color: #7B3E14;">Predictions log is currently unreachable. Predictions remain fully operational.</td></tr>';
-        if (isManual && refreshText) {
-          refreshText.textContent = 'Refresh Failed';
-          setTimeout(() => {
-            if (refreshText) refreshText.textContent = 'Refresh Log';
-          }, 1500);
-        }
+        console.warn('History load error:', err);
+        renderHistoryRows([]);
       } finally {
         if (tbody) tbody.style.opacity = '1';
-        if (isManual && refreshBtn) {
-          refreshBtn.classList.remove('refreshing');
-        }
       }
     }
     window.loadRecentHistory = loadRecentHistory;
@@ -1308,11 +1338,28 @@
         resultsWrapper.style.display = 'block';
         resultsWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-        // Refresh recent valuations from MongoDB
-        try {
-          loadRecentHistory();
-        } catch (hErr) {
-          console.warn('History load warning:', hErr);
+        // Save newly predicted property to live session history and render table
+        const newRecord = {
+          property_id: payload.property_id || ('prop_' + Date.now().toString(36)),
+          location: { zipcode: zipcode },
+          area_sqft: sqftLiving,
+          bedrooms: bedrooms,
+          bathrooms: bathrooms,
+          yr_built: yrBuilt,
+          grade: grade,
+          waterfront: waterfront,
+          predicted_price: price,
+          predicted_at: new Date().toISOString()
+        };
+        const currentHist = getStoredHistory();
+        const updatedHist = [newRecord, ...currentHist.filter(x => x.property_id !== newRecord.property_id)].slice(0, 15);
+        saveStoredHistory(updatedHist);
+        renderHistoryRows(updatedHist);
+
+        const syncTime = document.getElementById('history-sync-time');
+        if (syncTime) {
+          const now = new Date();
+          syncTime.textContent = `Last synced: ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
         }
 
       } catch (err) {
