@@ -1,0 +1,13 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/predict"
+  to = "/.netlify/functions/predict"
+  status = 200
+
+[[redirects]]
+  from = "/predictions"
+  to = "/.netlify/functions/predictions"
+  status = 200
