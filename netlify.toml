@@ -11,3 +11,4 @@
   from = "/predictions"
   to = "/.netlify/functions/predictions"
   status = 200
+

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="casaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="50%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#10B981"/>
+    </linearGradient>
+  </defs>
+  <!-- Background Rounded Tile -->
+  <rect width="64" height="64" rx="16" fill="url(#casaGrad)"/>
+  <!-- House Outer Shape -->
+  <path d="M12 30.5 L32 13 L52 30.5 V48 C52 50.2 50.2 52 48 52 H16 C13.8 52 12 50.2 12 48 Z" fill="#FFFFFF"/>
+  <!-- Doorway -->
+  <path d="M25 52 V36 C25 34.5 26.5 33 28 33 H36 C37.5 33 39 34.5 39 36 V52 Z" fill="#7C3AED"/>
+  <!-- Accent Circular Window -->
+  <circle cx="32" cy="24" r="3.5" fill="#10B981"/>
+</svg>
