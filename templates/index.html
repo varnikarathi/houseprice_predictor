@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CasaPredict — King County House Price Prediction</title>
+  <title>CasaPredict</title>
   <meta name="description" content="Discover your property's estimated market value in King County, Washington using machine learning models trained on 21,411 verified residential sales. Soft pastel proptech UI.">
   
   <!-- Modern Google Fonts -->
@@ -201,28 +201,28 @@
                 <label class="field-label" for="sqft_living">
                   Living Space <span class="unit">(sq ft)</span>
                 </label>
-                <input type="number" id="sqft_living" name="sqft_living" class="field-input" min="300" max="15000" step="25" value="2150" required>
+                <input type="number" id="sqft_living" name="sqft_living" class="field-input" min="300" max="15000" step="25" value="2150" placeholder="e.g. 2150" required>
               </div>
 
               <div class="form-field">
                 <label class="field-label" for="sqft_lot">
                   Total Lot Size <span class="unit">(sq ft)</span>
                 </label>
-                <input type="number" id="sqft_lot" name="sqft_lot" class="field-input" min="300" max="1500000" step="50" value="5800" required>
+                <input type="number" id="sqft_lot" name="sqft_lot" class="field-input" min="300" max="1500000" step="50" value="5800" placeholder="e.g. 5800" required>
               </div>
 
               <div class="form-field">
                 <label class="field-label" for="sqft_above">
                   Above Ground <span class="unit">(sq ft)</span>
                 </label>
-                <input type="number" id="sqft_above" name="sqft_above" class="field-input" min="0" max="12000" step="25" value="1650">
+                <input type="number" id="sqft_above" name="sqft_above" class="field-input" min="0" max="12000" step="25" value="1650" placeholder="e.g. 1650">
               </div>
 
               <div class="form-field">
                 <label class="field-label" for="sqft_basement">
                   Basement <span class="unit">(sq ft)</span>
                 </label>
-                <input type="number" id="sqft_basement" name="sqft_basement" class="field-input" min="0" max="5000" step="25" value="500">
+                <input type="number" id="sqft_basement" name="sqft_basement" class="field-input" min="0" max="5000" step="25" value="500" placeholder="0 if none">
               </div>
             </div>
           </div>
@@ -371,7 +371,7 @@
 
               <div class="form-field">
                 <label class="field-label" for="yr_built">Year Constructed</label>
-                <input type="number" id="yr_built" name="yr_built" class="field-input" min="1900" max="2026" value="1982" required>
+                <input type="number" id="yr_built" name="yr_built" class="field-input" min="1900" max="2026" value="1982" placeholder="e.g. 1982" required>
               </div>
             </div>
           </div>
@@ -447,7 +447,7 @@
               <span id="submit-btn-text">Predict House Price</span>
               <span id="submit-btn-spinner" class="spinner" style="display: none;"></span>
             </button>
-            <button type="button" id="reset-form-btn" class="btn-reset" onclick="handleResetForm()" title="Clear form inputs and reset defaults">
+            <button type="button" id="reset-form-btn" class="btn-reset" onclick="handleResetForm(event)" title="Clear form inputs and reset defaults">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M2.5 2v6h6M21.5 22v-6h-6"></path>
                 <path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.3"></path>
@@ -822,7 +822,7 @@
        ======================================================================== -->
   <footer class="footer">
     <div class="container">
-      <div class="footer-grid">
+      <div class="footer-grid" style="grid-template-columns: 1.5fr 1fr 1fr;">
         <div>
           <div class="nav-brand" style="margin-bottom: 0.5rem;">
             <div class="brand-icon">
@@ -833,9 +833,7 @@
             </div>
             <span>CasaPredict</span>
           </div>
-          <p class="footer-desc">
-            A modern, minimal, and visually attractive automated valuation system for King County residential properties powered by machine learning and soft pastel design aesthetics.
-          </p>
+          
         </div>
 
         <div>
@@ -858,18 +856,12 @@
           </ul>
         </div>
 
-        <div>
-          <h5 class="footer-col-title">Database Status</h5>
-          <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6;">
-            Connected to MongoDB instance.<br>
-            King County properties and predictions persisted to database.
-          </p>
-        </div>
+        
       </div>
 
       <div class="footer-bottom">
         <p>&copy; 2026 CasaPredict. All rights reserved.</p>
-        <p>King County House Price Prediction &bull; Soft Pastel Proptech UI</p>
+        <p>King County House Price Prediction</p>
       </div>
     </div>
   </footer>
@@ -1204,7 +1196,18 @@
       e.preventDefault();
       clearError();
 
-      const sqftLiving = parseFloat(document.getElementById('sqft_living').value) || 2150;
+      const rawSqft = (document.getElementById('sqft_living').value || '').trim();
+      if (!rawSqft) {
+        showError('Please enter the interior living space in sq ft.');
+        document.getElementById('sqft_living').focus();
+        return;
+      }
+      const sqftLiving = parseFloat(rawSqft);
+      if (isNaN(sqftLiving) || sqftLiving < 100) {
+        showError('Please enter a valid interior living area (at least 300 sq ft).');
+        document.getElementById('sqft_living').focus();
+        return;
+      }
       const sqftLot = parseFloat(document.getElementById('sqft_lot').value) || 5800;
       const sqftBasement = parseFloat(document.getElementById('sqft_basement').value) || 0;
       const sqftAbove = parseFloat(document.getElementById('sqft_above').value) || Math.max(sqftLiving - sqftBasement, 0);
@@ -1371,47 +1374,84 @@
       }
     });
 
-    // Reset Form function
-    function handleResetForm() {
-      const form = document.getElementById('prediction-form');
-      if (form) form.reset();
+    // Reset Form function — explicitly clears all inputs
+    function handleResetForm(e) {
+      if (e) {
+        if (typeof e.preventDefault === 'function') e.preventDefault();
+        if (typeof e.stopPropagation === 'function') e.stopPropagation();
+      }
       clearError();
 
-      document.getElementById('sqft_living').value = '2150';
-      document.getElementById('sqft_lot').value = '5800';
-      document.getElementById('sqft_above').value = '1650';
-      document.getElementById('sqft_basement').value = '500';
-      document.getElementById('bedrooms').value = '3';
-      document.getElementById('bathrooms').value = '2.25';
-      document.getElementById('floors').value = '1.5';
-      document.getElementById('zipcode').value = '98103';
-      document.getElementById('yr_built').value = '1982';
-      document.getElementById('yr_renovated').value = '0';
-      document.getElementById('grade').value = '8';
-      document.getElementById('condition').value = '3';
-      document.getElementById('view').value = '0';
-      document.getElementById('waterfront').checked = false;
+      // Clear all input text/number boxes to empty
+      const inputIds = ['sqft_living', 'sqft_lot', 'sqft_above', 'sqft_basement', 'yr_built', 'yr_renovated'];
+      inputIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+
+      // Uncheck waterfront
+      const wf = document.getElementById('waterfront');
+      if (wf) wf.checked = false;
+
+      // Reset dropdowns to standard defaults
+      const bed = document.getElementById('bedrooms');
+      if (bed) bed.value = '3';
+      const bath = document.getElementById('bathrooms');
+      if (bath) bath.value = '2.25';
+      const floors = document.getElementById('floors');
+      if (floors) floors.value = '1.5';
+      const zip = document.getElementById('zipcode');
+      if (zip) zip.value = '98103';
+      const grade = document.getElementById('grade');
+      if (grade) grade.value = '8';
+      const cond = document.getElementById('condition');
+      if (cond) cond.value = '3';
+      const view = document.getElementById('view');
+      if (view) view.value = '0';
 
       // Hide results card
-      if (resultsWrapper) resultsWrapper.style.display = 'none';
+      const resultsWrap = document.getElementById('results-wrapper');
+      if (resultsWrap) resultsWrap.style.display = 'none';
 
       currentUserValuation = null;
       try {
         initScatterChart();
-      } catch (e) {}
+      } catch (err) {}
 
+      // Visual feedback on Reset button
+      const resetBtn = document.getElementById('reset-form-btn');
       const resetText = document.getElementById('reset-btn-text');
       if (resetText) {
-        resetText.textContent = 'Form Cleared';
+        resetText.textContent = 'Form Cleared!';
+        if (resetBtn) {
+          resetBtn.style.color = '#059669';
+          resetBtn.style.borderColor = '#10B981';
+        }
         setTimeout(() => {
           if (resetText) resetText.textContent = 'Reset Form';
-        }, 1200);
+          if (resetBtn) {
+            resetBtn.style.color = '';
+            resetBtn.style.borderColor = '';
+          }
+        }, 1500);
+      }
+
+      // Focus first input field
+      const sqftLivingEl = document.getElementById('sqft_living');
+      if (sqftLivingEl) {
+        setTimeout(() => sqftLivingEl.focus(), 80);
       }
     }
     window.handleResetForm = handleResetForm;
 
     // Initialization routine
     function initPage() {
+      // Connect Reset Form button click listener directly
+      const resetFormBtn = document.getElementById('reset-form-btn');
+      if (resetFormBtn) {
+        resetFormBtn.addEventListener('click', handleResetForm);
+      }
+
       initScatterChart();
       initFeaturesChart();
       loadRecentHistory();
